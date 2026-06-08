@@ -1,0 +1,465 @@
+/* ============================================================
+   CSS 변수 — 라이트 / 다크 테마
+   ============================================================ */
+:root {
+    --bg:           #F2F2F7;
+    --surface:      #FFFFFF;
+    --surface-2:    #F2F2F7;
+    --on-surface:   #1C1C1E;
+    --on-surface-2: #6C6C70;
+    --border:       rgba(0, 0, 0, 0.07);
+    --shadow:       0 12px 40px rgba(0, 0, 0, 0.09);
+
+    --num-bg:       #FFFFFF;
+    --num-hover:    #E8E8ED;
+    --num-active:   #D1D1D6;
+    --num-text:     #1C1C1E;
+
+    --op-bg:        #EAF1FD;
+    --op-hover:     #D2E3FC;
+    --op-text:      #1A73E8;
+
+    --func-bg:      #FCE8E6;
+    --func-hover:   #FADADD;
+    --func-text:    #C5221F;
+
+    --eq-bg:        #1A73E8;
+    --eq-hover:     #1557B0;
+    --eq-shadow:    0 4px 18px rgba(26, 115, 232, 0.38);
+}
+
+[data-theme="dark"] {
+    --bg:           #000000;
+    --surface:      #1C1C1E;
+    --surface-2:    #2C2C2E;
+    --on-surface:   #F2F2F7;
+    --on-surface-2: #8E8E93;
+    --border:       rgba(255, 255, 255, 0.09);
+    --shadow:       0 12px 40px rgba(0, 0, 0, 0.55);
+
+    --num-bg:       #2C2C2E;
+    --num-hover:    #3A3A3C;
+    --num-active:   #48484A;
+    --num-text:     #F2F2F7;
+
+    --op-bg:        #1C2E4A;
+    --op-hover:     #243A5E;
+    --op-text:      #7BAAF7;
+
+    --func-bg:      #3A1C1A;
+    --func-hover:   #4E2422;
+    --func-text:    #FF6B6B;
+
+    --eq-bg:        #0A84FF;
+    --eq-hover:     #0066CC;
+    --eq-shadow:    0 4px 18px rgba(10, 132, 255, 0.38);
+}
+
+/* ============================================================
+   기본 리셋
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+/* ============================================================
+   레이아웃
+   ============================================================ */
+.app {
+    padding: 24px;
+}
+
+.calculator-wrap {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+/* ============================================================
+   계산기 카드
+   ============================================================ */
+.calculator {
+    width: 320px;
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* 헤더 */
+.calc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.calc-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--on-surface-2);
+}
+
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+    line-height: 1;
+}
+
+.icon-btn:hover {
+    transform: rotate(24deg) scale(1.12);
+}
+
+/* 디스플레이 */
+.display {
+    background: var(--surface-2);
+    border-radius: 20px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    min-height: 108px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 6px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.display-sub {
+    font-size: 0.9rem;
+    color: var(--on-surface-2);
+    min-height: 1.2em;
+    transition: color 0.3s;
+}
+
+.display-main {
+    font-size: 2.6rem;
+    font-weight: 300;
+    color: var(--on-surface);
+    word-break: break-all;
+    text-align: right;
+    line-height: 1.1;
+    transition: color 0.3s;
+}
+
+/* 버튼 그리드 */
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.btn {
+    height: 66px;
+    border: none;
+    border-radius: 18px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.1s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+    transform: scale(0.91);
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+/* 숫자 버튼 */
+.btn-num {
+    background: var(--num-bg);
+    color: var(--num-text);
+    border: 1px solid var(--border);
+}
+
+.btn-num:hover {
+    background: var(--num-hover);
+}
+
+.btn-num:active {
+    background: var(--num-active);
+}
+
+/* 연산자 버튼 */
+.btn-op {
+    background: var(--op-bg);
+    color: var(--op-text);
+    font-weight: 600;
+}
+
+.btn-op:hover {
+    background: var(--op-hover);
+}
+
+.btn-op.active {
+    background: var(--op-text);
+    color: #ffffff;
+}
+
+/* AC / ⌫ 버튼 */
+.btn-func {
+    background: var(--func-bg);
+    color: var(--func-text);
+    font-weight: 600;
+}
+
+.btn-func:hover {
+    background: var(--func-hover);
+}
+
+/* = 버튼 */
+.btn-eq {
+    background: var(--eq-bg);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.5rem;
+    box-shadow: var(--eq-shadow);
+}
+
+.btn-eq:hover {
+    background: var(--eq-hover);
+}
+
+/* 기록 토글 버튼 */
+.history-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 20px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--on-surface-2);
+    font-size: 0.88rem;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.history-btn:hover {
+    background: var(--surface-2);
+    color: var(--on-surface);
+}
+
+.badge {
+    background: var(--eq-bg);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    min-width: 24px;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+/* ============================================================
+   기록 패널
+   ============================================================ */
+.history-panel {
+    width: 256px;
+    max-height: 530px;
+    background: var(--surface);
+    border-radius: 28px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(-10px) scale(0.97);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.history-panel.open {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: all;
+}
+
+.history-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.history-top h2 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--on-surface);
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: var(--func-text);
+    font-size: 0.78rem;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.text-btn:hover {
+    background: var(--func-bg);
+}
+
+.history-list {
+    list-style: none;
+    overflow-y: auto;
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+.history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+.empty-msg {
+    color: var(--on-surface-2);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 48px 16px;
+    line-height: 2;
+}
+
+.history-item {
+    background: var(--surface-2);
+    border-radius: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.history-item:hover {
+    border-color: var(--eq-bg);
+    box-shadow: 0 0 0 1px var(--eq-bg);
+}
+
+.hist-expr {
+    font-size: 0.76rem;
+    color: var(--on-surface-2);
+    margin-bottom: 4px;
+}
+
+.hist-result {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--on-surface);
+}
+
+.hist-date {
+    font-size: 0.7rem;
+    color: var(--on-surface-2);
+    margin-top: 4px;
+}
+
+/* 도전 2: 기록 개별 삭제 버튼 */
+.history-item {
+    position: relative;
+}
+
+.del-item-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--on-surface-2);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-item:hover .del-item-btn {
+    opacity: 1;
+}
+
+.del-item-btn:hover {
+    background: var(--func-bg);
+    color: var(--func-text);
+}
+
+/* ============================================================
+   반응형 (모바일)
+   ============================================================ */
+@media (max-width: 640px) {
+    .calculator-wrap {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .history-panel {
+        width: 320px;
+        max-height: 360px;
+        transform: translateY(-8px) scale(0.97);
+    }
+
+    .history-panel.open {
+        transform: translateY(0) scale(1);
+    }
+}
