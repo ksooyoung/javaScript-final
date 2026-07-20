@@ -238,6 +238,23 @@ export const deleteLast = () => {
  */
 export const appendPercent = () => {
   // 💡 [도전 1] 여기에 코드를 작성하세요.
+  // 수식이 비어있으면 무시
+  if (!expression) return;
+
+  // 맨 뒤에 있는 숫자(소수점 포함)를 찾습니다.
+  const splitNum = expression.split(/[+\-*\/]/);
+  const numStr = splitNum[splitNum.length - 1];
+
+  // 맨 뒤가 숫자가 아니면(연산자로 끝나면) 종료
+  if (!numStr) return;
+
+  // 100으로 나눈 숫자 계산
+  const changeNum = parseFloat(numStr) / 100;
+
+  // expression의 맨 뒤에 있던 기존 숫자 길이만큼 잘라내고 새 숫자 덧붙이기
+  expression = expression.slice(0, -numStr.length) + changeNum;
+
+  updateDisplay();
 };
 
 // ── 도전 3: 기록 클릭 시 결과 불러오기 (선택 과제) ──────────
@@ -250,6 +267,9 @@ export const appendPercent = () => {
  */
 export const setExpression = (value) => {
   // 💡 [도전 3] 여기에 코드를 작성하세요.
+  expression = value;
+  justCalculated = true;
+  updateDisplay();
 };
 
 // ── 전체 초기화 (완성 코드 — 수정 금지) ─────────────────────

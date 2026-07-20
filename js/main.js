@@ -2,97 +2,168 @@
 //  main.js — 이벤트 연결 및 초기화 (완성 코드 — 수정 금지)
 // ============================================================
 
-import { appendNumber, appendOperator, calculate, deleteLast, clearAll } from './calculator.js';
-import { loadHistory, addHistory, clearHistory } from './history.js';
+import {
+  appendNumber,
+  appendOperator,
+  appendPercent,
+  calculate,
+  deleteLast,
+  clearAll,
+  setExpression,
+} from "./calculator.js";
+import {
+  loadHistory,
+  addHistory,
+  clearHistory,
+  deleteHistoryItem,
+} from "./history.js";
 
 // DOM 요소
 const historyPanel = document.getElementById("historyPanel");
-const historyList  = document.getElementById("historyList");
-const historyBtn   = document.getElementById("historyBtn");
-const clearAllBtn  = document.getElementById("clearAllBtn");
-const themeBtn     = document.getElementById("themeBtn");
-const badge        = document.getElementById("badge");
+const historyList = document.getElementById("historyList");
+const historyBtn = document.getElementById("historyBtn");
+const clearAllBtn = document.getElementById("clearAllBtn");
+const themeBtn = document.getElementById("themeBtn");
+const badge = document.getElementById("badge");
 
 // ── 기록 렌더링 ──────────────────────────────────────────────
 const renderHistory = (history) => {
-    badge.textContent = history.length;
+  badge.textContent = history.length;
 
-    if (history.length === 0) {
-        historyList.innerHTML = '<li class="empty-msg">아직 계산 기록이 없어요 🧮</li>';
-        return;
-    }
+  if (history.length === 0) {
+    historyList.innerHTML =
+      '<li class="empty-msg">아직 계산 기록이 없어요 🧮</li>';
+    return;
+  }
 
-    historyList.innerHTML = history.map(item => `
+  historyList.innerHTML = history
+    .map(
+      (item, index) => `
         <li class="history-item">
             <div class="hist-expr">${item.expression} =</div>
             <div class="hist-result">${item.result}</div>
             <div class="hist-date">${item.date}</div>
+            <button class="del-item-btn" data-index="${index}">x</button>
         </li>
-    `).join("");
+    `,
+    )
+    .join("");
 };
 
 // ── 버튼 이벤트 ──────────────────────────────────────────────
-document.querySelectorAll(".btn-num").forEach(btn =>
-    btn.addEventListener("click", () => appendNumber(btn.dataset.num))
+document
+  .querySelectorAll(".btn-num")
+  .forEach((btn) =>
+    btn.addEventListener("click", () => appendNumber(btn.dataset.num)),
+  );
+
+document.querySelectorAll(".btn-op").forEach((btn) =>
+  btn.addEventListener("click", () => {
+    document
+      .querySelectorAll(".btn-op")
+      .forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    appendOperator(btn.dataset.op);
+  }),
 );
 
-document.querySelectorAll(".btn-op").forEach(btn =>
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".btn-op").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        appendOperator(btn.dataset.op);
-    })
-);
-
-document.querySelector("[data-action='equals']").addEventListener("click", () => {
+document
+  .querySelector("[data-action='equals']")
+  .addEventListener("click", () => {
     const r = calculate();
     if (r) renderHistory(addHistory(r.expression, r.result));
-    document.querySelectorAll(".btn-op").forEach(b => b.classList.remove("active"));
-});
+    document
+      .querySelectorAll(".btn-op")
+      .forEach((b) => b.classList.remove("active"));
+  });
 
-document.querySelector("[data-action='clear']").addEventListener("click", clearAll);
+document
+  .querySelector("[data-action='clear']")
+  .addEventListener("click", clearAll);
 
-document.querySelector("[data-action='delete']").addEventListener("click", deleteLast);
+document
+  .querySelector("[data-action='percent']")
+  .addEventListener("click", appendPercent);
+
+  document
+  .querySelector("[data-action='delete']")
+  .addEventListener("click", deleteLast);
+
 
 // ── 키보드 입력 ──────────────────────────────────────────────
 document.addEventListener("keydown", (e) => {
-    if ((e.key >= "0" && e.key <= "9") || e.key === ".") {
-        appendNumber(e.key);
-        return;
-    }
-    if (["+", "-", "*", "/"].includes(e.key)) {
-        document.querySelectorAll(".btn-op").forEach(b => b.classList.remove("active"));
-        const opBtn = document.querySelector(`[data-op="${e.key}"]`);
-        if (opBtn) opBtn.classList.add("active");
-        appendOperator(e.key);
-        return;
-    }
-    if (e.key === "Enter" || e.key === "=") {
-        const r = calculate();
-        if (r) renderHistory(addHistory(r.expression, r.result));
-        document.querySelectorAll(".btn-op").forEach(b => b.classList.remove("active"));
-    }
-    if (e.key === "Backspace") deleteLast();
-    if (e.key === "Escape")    clearAll();
+  if ((e.key >= "0" && e.key <= "9") || e.key === ".") {
+    appendNumber(e.key);
+    return;
+  }
+  if (["+", "-", "*", "/"].includes(e.key)) {
+    document
+      .querySelectorAll(".btn-op")
+      .forEach((b) => b.classList.remove("active"));
+    const opBtn = document.querySelector(`[data-op="${e.key}"]`);
+    if (opBtn) opBtn.classList.add("active");
+    appendOperator(e.key);
+    return;
+  }
+  if (e.key === "Enter" || e.key === "=") {
+    const r = calculate();
+    if (r) renderHistory(addHistory(r.expression, r.result));
+    document
+      .querySelectorAll(".btn-op")
+      .forEach((b) => b.classList.remove("active"));
+  }
+  if (e.key === "Backspace") deleteLast();
+  if (e.key === "Escape") clearAll();
 });
 
 // ── 기록 패널 토글 ───────────────────────────────────────────
 historyBtn.addEventListener("click", () =>
-    historyPanel.classList.toggle("open")
+  historyPanel.classList.toggle("open"),
 );
 
 clearAllBtn.addEventListener("click", () => renderHistory(clearHistory()));
 
+historyList.addEventListener("click", (e) => {
+  // 삭제 버튼 클릭
+  if (e.target.classList.contains("del-item-btn")) {
+    const index = Number(e.target.dataset.index);
+    const updatedHistory = deleteHistoryItem(index);
+    renderHistory(updatedHistory);
+  }
+
+  // 2. 기록 항목(li) 클릭 시 수식 불러오기
+  const historyItem = e.target.closest(".history-item");
+
+  // 기록 항목을 정확히 클릭한 경우에만 실행
+  if (historyItem) {
+    // li 또는 내부 삭제버튼 안의 data-index 값을 가져옵니다.
+    // 만약 li 태그 자체에 data-index="${index}"가 없다면 버튼 등의 data-index를 활용합니다.
+    const index = Number(
+      historyItem.querySelector(".del-item-btn")?.dataset.index,
+    );
+
+    if (!isNaN(index)) {
+      const historyList = loadHistory();
+      const targetItem = historyList[index];
+
+      // 객체의 expression(수식) 값만 넘겨줍니다!
+      if (targetItem) {
+        setExpression(targetItem.expression);
+      }
+    }
+  }
+});
+
 // ── 다크모드 ─────────────────────────────────────────────────
 const applyTheme = (dark) => {
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    themeBtn.textContent = dark ? "☀️" : "🌙";
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  themeBtn.textContent = dark ? "☀️" : "🌙";
 };
 
 themeBtn.addEventListener("click", () => {
-    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-    applyTheme(!isDark);
-    localStorage.setItem("calc_theme", !isDark ? "dark" : "light");
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  applyTheme(!isDark);
+  localStorage.setItem("calc_theme", !isDark ? "dark" : "light");
 });
 
 // ── 초기화 ───────────────────────────────────────────────────
