@@ -249,7 +249,9 @@ export const appendPercent = () => {
   if (!numStr) return;
 
   // 100으로 나눈 숫자 계산
-  const changeNum = parseFloat(numStr) / 100;
+  const percentNum = parseFloat(numStr) / 100;
+  const changeNum = parseFloat(percentNum.toFixed(10));
+  console.log(changeNum);
 
   // expression의 맨 뒤에 있던 기존 숫자 길이만큼 잘라내고 새 숫자 덧붙이기
   expression = expression.slice(0, -numStr.length) + changeNum;
